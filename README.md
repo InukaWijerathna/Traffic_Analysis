@@ -1,6 +1,6 @@
 # Traffic Analysis System
 
-This repository contains a reimagined version of my first-year programming coursework. The original project processed traffic CSV data; this updated system improves data cleaning, analysis, and visualization to support more advanced learning.
+This repository contains a reimagined version of my first-year programming coursework. The original project processed traffic CSV data; this updated system supports more advanced Features like data cleaning, analysis, and visualization.
 
 ## What it is
 - A small Python package that reads traffic CSV files and computes useful metrics per date and junction.
