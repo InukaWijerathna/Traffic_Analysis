@@ -1,1 +1,63 @@
+# Output files
 results.txt
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+*.egg-info/
+*.egg
+build/
+dist/
+pip-wheel-metadata/
+
+# Installer logs
+pip-log.txt
+
+# Virtual environments
+venv/
+env/
+.venv/
+.env
+
+# Pytest cache
+.pytest_cache/
+
+# mypy
+.mypy_cache/
+
+# Editor directories and files
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Jupyter
+.ipynb_checkpoints
+
+# SQLite
+*.sqlite3
+
+# Logs
+*.log
+
+# Coverage
+.coverage
+htmlcov/
+
+# Matplotlib cache
+matplotlib_cache/
+
+# Don't ignore these project files
+!requirements.txt
+!README.md
