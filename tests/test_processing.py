@@ -1,5 +1,5 @@
 import os
-from Traffic_Analysis_System.traffic_analysis import process_csv_data
+from traffic_analysis import process_csv_data
 
 
 def test_process_sample_file():
