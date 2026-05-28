@@ -1,6 +1,6 @@
 # Traffic Analysis System
 
-This repository contains a reimagined version of my first-year programming coursework. The original project processed traffic CSV data; this updated system improves data cleaning, analysis, and visualization while keeping the same learning goals.
+This repository contains a reimagined version of my first-year programming coursework. The original project processed traffic CSV data; this updated system improves data cleaning, analysis, and visualization to support more advanced learning.
 
 ## What it is
 - A small Python package that reads traffic CSV files and computes useful metrics per date and junction.
@@ -26,9 +26,9 @@ This repository contains a reimagined version of my first-year programming cours
 3. From the workspace root run:
 
 ```bash
-python -m pip install -r Traffic_Analysis_System/requirements.txt
+python -m pip install -r requirements.txt
 python -m pytest -q
-python -c "from Traffic_Analysis_System.traffic_analysis import MultiCSVProcessor; MultiCSVProcessor().process_files()"
+python -c "from traffic_analysis import MultiCSVProcessor; MultiCSVProcessor().process_files()"
 ```
 
 ## Notes and next steps

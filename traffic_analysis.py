@@ -4,6 +4,12 @@
 import csv
 import os
 import tkinter as tk
+from tkinter import filedialog
+try:
+    import matplotlib.pyplot as plt
+    MATPLOTLIB_AVAILABLE = True
+except Exception:
+    MATPLOTLIB_AVAILABLE = False
 from collections import defaultdict
 
 # Default data directory inside the package
@@ -232,26 +238,90 @@ def save_results_to_file(outcomes, file_name="results.txt"):
         print(f"Failed to write results: {e}")
 
 
+def plot_histogram_matplotlib(traffic_data, date, top_n=None, save_path=None):
+    """Create an improved histogram using matplotlib. If `save_path` is provided,
+    the figure is saved to that path; otherwise it is shown interactively."""
+    if not MATPLOTLIB_AVAILABLE:
+        print("Matplotlib not available; please install matplotlib to use this feature.")
+        return
+    if not traffic_data:
+        print("No data to plot")
+        return
+    items = sorted(traffic_data.items(), key=lambda x: x[1], reverse=True)
+    if top_n:
+        items = items[:top_n]
+    labels = [it[0] for it in items]
+    values = [it[1] for it in items]
+    fig_w = max(8, len(labels) * 0.5)
+    fig, ax = plt.subplots(figsize=(fig_w, 6))
+    colors = plt.get_cmap('tab20').colors
+    bars = ax.bar(range(len(values)), values, color=[colors[i % len(colors)] for i in range(len(values))])
+    ax.set_xticks(range(len(labels)))
+    ax.set_xticklabels(labels, rotation=45, ha='right')
+    ax.set_ylabel('Count')
+    ax.set_title(f'Vehicle counts per junction — {date}')
+    ax.grid(axis='y', linestyle='--', alpha=0.7)
+    for bar, val in zip(bars, values):
+        ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height(), str(val), ha='center', va='bottom', fontsize=8)
+    plt.tight_layout()
+    if save_path:
+        try:
+            fig.savefig(save_path, dpi=150)
+            print(f"Saved histogram to {save_path}")
+        except Exception as e:
+            print(f"Failed to save histogram: {e}")
+    else:
+        plt.show()
+    plt.close(fig)
+
+
 class HistogramApp:
     def __init__(self, traffic_data, date):
         self.traffic_data = traffic_data
         self.date = date
         self.root = tk.Tk()
         self.canvas = None
+        self._bar_items = []
+        self._sort_desc = True
+        self.tooltip = None
 
     def setup_window(self):
         self.root.title(f"Traffic Histogram - {self.date}")
         width, height = 900, 600
-        self.canvas = tk.Canvas(self.root, width=width, height=height, bg="white")
-        self.canvas.pack()
+
+        # Toolbar
+        toolbar = tk.Frame(self.root)
+        toolbar.pack(fill='x', padx=6, pady=4)
+        sort_btn = tk.Button(toolbar, text='Toggle Sort', command=self.toggle_sort)
+        sort_btn.pack(side='left')
+        save_btn = tk.Button(toolbar, text='Save as PS', command=self.save_as_postscript)
+        save_btn.pack(side='left', padx=(6, 0))
+        # Matplotlib quick view / export (enabled only if matplotlib is available)
+        mpl_text = 'Matplotlib View' if MATPLOTLIB_AVAILABLE else 'Matplotlib (missing)'
+        mpl_btn = tk.Button(toolbar, text=mpl_text, command=self.open_matplotlib, state='normal' if MATPLOTLIB_AVAILABLE else 'disabled')
+        mpl_btn.pack(side='left', padx=(6, 0))
+        png_btn = tk.Button(toolbar, text='Save PNG', command=self.save_as_png, state='normal' if MATPLOTLIB_AVAILABLE else 'disabled')
+        png_btn.pack(side='left', padx=(6, 0))
+
+        # Canvas with horizontal scrollbar for many bars
+        canvas_frame = tk.Frame(self.root)
+        canvas_frame.pack(fill='both', expand=True)
+        self.canvas = tk.Canvas(canvas_frame, width=width, height=height, bg='white')
+        hbar = tk.Scrollbar(canvas_frame, orient='horizontal', command=self.canvas.xview)
+        self.canvas.configure(xscrollcommand=hbar.set)
+        self.canvas.pack(side='top', fill='both', expand=True)
+        hbar.pack(side='bottom', fill='x')
+
         self.width = width
         self.height = height
+        # tooltip label (hidden until needed)
+        self.tooltip = tk.Label(self.root, bg='lightyellow', relief='solid', borderwidth=1)
 
     def draw_histogram(self):
         if not self.traffic_data:
             self.canvas.create_text(self.width // 2, self.height // 2, text="No data to display", font=("Arial", 16))
             return
-        items = sorted(self.traffic_data.items(), key=lambda x: x[1], reverse=True)
+        items = sorted(self.traffic_data.items(), key=lambda x: x[1], reverse=self._sort_desc)
         values = [t[1] for t in items]
         left_margin = 100
         right_margin = 50
@@ -262,22 +332,80 @@ class HistogramApp:
         self.canvas.create_line(left_margin, top_margin, left_margin, top_margin + plot_height, width=2)
         self.canvas.create_line(left_margin, top_margin + plot_height, left_margin + plot_width, top_margin + plot_height, width=2)
         max_val = max(values) if values else 1
-        bar_width = max(20, plot_width // (len(values) * 2))
-        spacing = (plot_width - bar_width * len(values)) // (len(values) + 1)
+        # compute bar width and spacing, allow horizontal scrolling if too many bars
+        base_bar_width = 40
+        bar_width = max(20, min(base_bar_width, plot_width // (len(values) * 2)))
+        spacing = 20
+        total_plot_width = left_margin + right_margin + (bar_width + spacing) * len(values) + spacing
+        if total_plot_width > self.width:
+            scroll_region_width = total_plot_width
+        else:
+            scroll_region_width = self.width
+        self.canvas.configure(scrollregion=(0, 0, scroll_region_width, self.height))
         colors = ["#4e79a7", "#f28e2b", "#e15759", "#76b7b2", "#59a14f", "#edc949", "#af7aa1", "#ff9da7"]
         x = left_margin + spacing
+        # clear previous bar item ids
+        self._bar_items.clear()
         for i, (label, val) in enumerate(items):
             h = int((val / max_val) * (plot_height - 20))
             y0 = top_margin + plot_height - h
             y1 = top_margin + plot_height
             color = colors[i % len(colors)]
-            self.canvas.create_rectangle(x, y0, x + bar_width, y1, fill=color, outline="black")
-            self.canvas.create_text(x + bar_width // 2, y1 + 12, text=label, angle=45, anchor="nw", font=("Arial", 9))
-            self.canvas.create_text(x + bar_width // 2, y0 - 10, text=str(val), font=("Arial", 9))
+            rect_id = self.canvas.create_rectangle(x, y0, x + bar_width, y1, fill=color, outline="black", tags=(f'bar{i}',))
+            text_id = self.canvas.create_text(x + bar_width // 2, y1 + 12, text=label, angle=45, anchor="nw", font=("Arial", 9))
+            val_id = self.canvas.create_text(x + bar_width // 2, y0 - 10, text=str(val), font=("Arial", 9))
+            # bind hover events to show tooltip
+            self.canvas.tag_bind(rect_id, '<Enter>', lambda e, L=label, V=val: self._show_tooltip(e, L, V))
+            self.canvas.tag_bind(rect_id, '<Leave>', lambda e: self._hide_tooltip())
+            self.canvas.tag_bind(rect_id, '<Motion>', lambda e: self._move_tooltip(e))
+            self._bar_items.append((rect_id, label, val))
             x += bar_width + spacing
         self.canvas.create_text(self.width // 2, 20, text=f"Vehicle counts per junction — {self.date}", font=("Arial", 14, "bold"))
         self.canvas.create_text(40, top_margin + plot_height // 2, text="Count", angle=90, font=("Arial", 12))
         self.add_legend()
+
+    def _show_tooltip(self, event, label, val):
+        txt = f"{label}: {val}"
+        self.tooltip.config(text=txt)
+        self.tooltip.place(x=event.x_root - self.root.winfo_rootx() + 10, y=event.y_root - self.root.winfo_rooty() + 10)
+
+    def _move_tooltip(self, event):
+        self.tooltip.place(x=event.x_root - self.root.winfo_rootx() + 10, y=event.y_root - self.root.winfo_rooty() + 10)
+
+    def _hide_tooltip(self):
+        self.tooltip.place_forget()
+
+    def toggle_sort(self):
+        self._sort_desc = not self._sort_desc
+        # redraw with new sort order
+        self.canvas.delete('all')
+        self.draw_histogram()
+
+    def save_as_postscript(self):
+        fname = filedialog.asksaveasfilename(defaultextension='.ps', filetypes=[('PostScript', '*.ps')])
+        if not fname:
+            return
+        try:
+            # Save the canvas as PostScript which can be converted externally to PNG/PDF
+            self.canvas.postscript(file=fname)
+            print(f"Saved canvas as {fname}")
+        except Exception as e:
+            print(f"Failed to save canvas: {e}")
+
+    def open_matplotlib(self):
+        if not MATPLOTLIB_AVAILABLE:
+            print("Matplotlib not available")
+            return
+        plot_histogram_matplotlib(self.traffic_data, self.date)
+
+    def save_as_png(self):
+        if not MATPLOTLIB_AVAILABLE:
+            print("Matplotlib not available")
+            return
+        fname = filedialog.asksaveasfilename(defaultextension='.png', filetypes=[('PNG Image', '*.png')])
+        if not fname:
+            return
+        plot_histogram_matplotlib(self.traffic_data, self.date, save_path=fname)
 
     def add_legend(self):
         legend_x = self.width - 200
@@ -289,6 +417,10 @@ class HistogramApp:
             self.canvas.create_text(legend_x + 20, y + 6, anchor="w", text=label, font=("Arial", 9))
 
     def run(self):
+        # Prefer Matplotlib view when available for improved visuals/export
+        if MATPLOTLIB_AVAILABLE:
+            plot_histogram_matplotlib(self.traffic_data, self.date)
+            return
         self.setup_window()
         self.draw_histogram()
         self.root.mainloop()
