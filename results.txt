@@ -55,3 +55,22 @@ hanley_peak_count: 71
 hanley_peak_hours: ['18']
 rain_hours_count: 6
 
+--- Processed Outcomes ---
+selected_file: traffic_data16062024.csv
+date: 16/06/2024
+total_vehicles: 101
+total_trucks: 11
+total_electric: 29
+two_wheeled: 29
+buss_elm_north: 0
+no_turn_both: 38
+pct_trucks: 11
+avg_bicycles_per_hour: 0
+total_over_speed: 20
+total_only_elm: 52
+total_only_hanley: 49
+pct_elm_scooters: 6
+hanley_peak_count: 5
+hanley_peak_hours: ['1']
+rain_hours_count: 3
+

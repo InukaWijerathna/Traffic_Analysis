@@ -5,6 +5,11 @@ import csv
 import os
 import tkinter as tk
 from tkinter import filedialog
+try:
+    import matplotlib.pyplot as plt
+    MATPLOTLIB_AVAILABLE = True
+except Exception:
+    MATPLOTLIB_AVAILABLE = False
 from collections import defaultdict
 
 # Default data directory inside the package
@@ -233,6 +238,43 @@ def save_results_to_file(outcomes, file_name="results.txt"):
         print(f"Failed to write results: {e}")
 
 
+def plot_histogram_matplotlib(traffic_data, date, top_n=None, save_path=None):
+    """Create an improved histogram using matplotlib. If `save_path` is provided,
+    the figure is saved to that path; otherwise it is shown interactively."""
+    if not MATPLOTLIB_AVAILABLE:
+        print("Matplotlib not available; please install matplotlib to use this feature.")
+        return
+    if not traffic_data:
+        print("No data to plot")
+        return
+    items = sorted(traffic_data.items(), key=lambda x: x[1], reverse=True)
+    if top_n:
+        items = items[:top_n]
+    labels = [it[0] for it in items]
+    values = [it[1] for it in items]
+    fig_w = max(8, len(labels) * 0.5)
+    fig, ax = plt.subplots(figsize=(fig_w, 6))
+    colors = plt.get_cmap('tab20').colors
+    bars = ax.bar(range(len(values)), values, color=[colors[i % len(colors)] for i in range(len(values))])
+    ax.set_xticks(range(len(labels)))
+    ax.set_xticklabels(labels, rotation=45, ha='right')
+    ax.set_ylabel('Count')
+    ax.set_title(f'Vehicle counts per junction — {date}')
+    ax.grid(axis='y', linestyle='--', alpha=0.7)
+    for bar, val in zip(bars, values):
+        ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height(), str(val), ha='center', va='bottom', fontsize=8)
+    plt.tight_layout()
+    if save_path:
+        try:
+            fig.savefig(save_path, dpi=150)
+            print(f"Saved histogram to {save_path}")
+        except Exception as e:
+            print(f"Failed to save histogram: {e}")
+    else:
+        plt.show()
+    plt.close(fig)
+
+
 class HistogramApp:
     def __init__(self, traffic_data, date):
         self.traffic_data = traffic_data
@@ -254,6 +296,12 @@ class HistogramApp:
         sort_btn.pack(side='left')
         save_btn = tk.Button(toolbar, text='Save as PS', command=self.save_as_postscript)
         save_btn.pack(side='left', padx=(6, 0))
+        # Matplotlib quick view / export (enabled only if matplotlib is available)
+        mpl_text = 'Matplotlib View' if MATPLOTLIB_AVAILABLE else 'Matplotlib (missing)'
+        mpl_btn = tk.Button(toolbar, text=mpl_text, command=self.open_matplotlib, state='normal' if MATPLOTLIB_AVAILABLE else 'disabled')
+        mpl_btn.pack(side='left', padx=(6, 0))
+        png_btn = tk.Button(toolbar, text='Save PNG', command=self.save_as_png, state='normal' if MATPLOTLIB_AVAILABLE else 'disabled')
+        png_btn.pack(side='left', padx=(6, 0))
 
         # Canvas with horizontal scrollbar for many bars
         canvas_frame = tk.Frame(self.root)
@@ -344,6 +392,21 @@ class HistogramApp:
         except Exception as e:
             print(f"Failed to save canvas: {e}")
 
+    def open_matplotlib(self):
+        if not MATPLOTLIB_AVAILABLE:
+            print("Matplotlib not available")
+            return
+        plot_histogram_matplotlib(self.traffic_data, self.date)
+
+    def save_as_png(self):
+        if not MATPLOTLIB_AVAILABLE:
+            print("Matplotlib not available")
+            return
+        fname = filedialog.asksaveasfilename(defaultextension='.png', filetypes=[('PNG Image', '*.png')])
+        if not fname:
+            return
+        plot_histogram_matplotlib(self.traffic_data, self.date, save_path=fname)
+
     def add_legend(self):
         legend_x = self.width - 200
         legend_y = 60
@@ -354,6 +417,10 @@ class HistogramApp:
             self.canvas.create_text(legend_x + 20, y + 6, anchor="w", text=label, font=("Arial", 9))
 
     def run(self):
+        # Prefer Matplotlib view when available for improved visuals/export
+        if MATPLOTLIB_AVAILABLE:
+            plot_histogram_matplotlib(self.traffic_data, self.date)
+            return
         self.setup_window()
         self.draw_histogram()
         self.root.mainloop()
