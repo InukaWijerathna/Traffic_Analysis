@@ -74,3 +74,141 @@ hanley_peak_count: 5
 hanley_peak_hours: ['1']
 rain_hours_count: 3
 
+--- Processed Outcomes ---
+selected_file: traffic_data02092024.csv
+date: 02/09/2024
+total_vehicles: 321
+total_trucks: 36
+total_electric: 96
+two_wheeled: 147
+buss_elm_north: 0
+no_turn_both: 86
+pct_trucks: 11
+avg_bicycles_per_hour: 2
+total_over_speed: 80
+total_only_elm: 0
+total_only_hanley: 0
+pct_elm_scooters: 0
+hanley_peak_count: 0
+hanley_peak_hours: []
+rain_hours_count: 24
+
+--- Processed Outcomes ---
+selected_file: traffic_data01072024.csv
+date: 01/07/2024
+total_vehicles: 233
+total_trucks: 21
+total_electric: 71
+two_wheeled: 106
+buss_elm_north: 0
+no_turn_both: 34
+pct_trucks: 9
+avg_bicycles_per_hour: 1
+total_over_speed: 72
+total_only_elm: 0
+total_only_hanley: 0
+pct_elm_scooters: 0
+hanley_peak_count: 0
+hanley_peak_hours: []
+rain_hours_count: 0
+
+--- Processed Outcomes ---
+selected_file: traffic_data01072024.csv
+date: 01/07/2024
+total_vehicles: 233
+total_trucks: 21
+total_electric: 71
+two_wheeled: 106
+buss_elm_north: 0
+no_turn_both: 34
+pct_trucks: 9
+avg_bicycles_per_hour: 1
+total_over_speed: 72
+total_only_elm: 0
+total_only_hanley: 0
+pct_elm_scooters: 0
+hanley_peak_count: 0
+hanley_peak_hours: []
+rain_hours_count: 0
+junction_breakdown: {'Maple Avenue/Cedar Lane': 137, 'Oak Street/Pine Road': 96}
+
+--- Processed Outcomes ---
+selected_file: traffic_data05082024.csv
+date: 05/08/2024
+total_vehicles: 337
+total_trucks: 29
+total_electric: 91
+two_wheeled: 150
+buss_elm_north: 0
+no_turn_both: 70
+pct_trucks: 9
+avg_bicycles_per_hour: 2
+total_over_speed: 102
+total_only_elm: 0
+total_only_hanley: 0
+pct_elm_scooters: 0
+hanley_peak_count: 0
+hanley_peak_hours: []
+rain_hours_count: 0
+junction_breakdown: {'Oak Street/Pine Road': 196, 'River Road/Bridge Street': 141}
+
+--- Processed Outcomes ---
+selected_file: traffic_data05082024.csv
+date: 05/08/2024
+total_vehicles: 337
+total_trucks: 29
+total_electric: 91
+two_wheeled: 150
+buss_elm_north: 0
+no_turn_both: 70
+pct_trucks: 9
+avg_bicycles_per_hour: 2
+total_over_speed: 102
+total_only_elm: 0
+total_only_hanley: 0
+pct_elm_scooters: 0
+hanley_peak_count: 0
+hanley_peak_hours: []
+rain_hours_count: 0
+junction_breakdown: {'Oak Street/Pine Road': 196, 'River Road/Bridge Street': 141}
+
+--- Processed Outcomes ---
+selected_file: traffic_data12082024.csv
+date: 12/08/2024
+total_vehicles: 304
+total_trucks: 33
+total_electric: 77
+two_wheeled: 138
+buss_elm_north: 0
+no_turn_both: 51
+pct_trucks: 11
+avg_bicycles_per_hour: 1
+total_over_speed: 133
+total_only_elm: 0
+total_only_hanley: 0
+pct_elm_scooters: 0
+hanley_peak_count: 0
+hanley_peak_hours: []
+rain_hours_count: 24
+junction_breakdown: {'Park Lane/Garden Way': 144, 'High Street/Market Road': 160}
+
+--- Processed Outcomes ---
+selected_file: traffic_data05082024.csv
+date: 05/08/2024
+total_vehicles: 337
+total_trucks: 29
+total_electric: 91
+two_wheeled: 150
+buss_elm_north: 0
+no_turn_both: 70
+pct_trucks: 9
+avg_bicycles_per_hour: 2
+total_over_speed: 102
+total_only_elm: 0
+total_only_hanley: 0
+pct_elm_scooters: 0
+hanley_peak_count: 0
+hanley_peak_hours: []
+rain_hours_count: 0
+junction_breakdown: {'Oak Street/Pine Road': 196, 'River Road/Bridge Street': 141}
+
