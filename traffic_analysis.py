@@ -363,13 +363,12 @@ def save_results_to_file(outcomes, file_name="results.txt"):
 
 
 def plot_histogram_matplotlib(traffic_data, date, top_n=None, save_path=None):
-    """Build the histogram figure. Returns the figure, or None when saving to file."""
     if not MATPLOTLIB_AVAILABLE:
         _error("Matplotlib not available; pip install matplotlib to enable this feature.")
-        return None
+        return
     if not traffic_data:
         _error("No data to plot.")
-        return None
+        return
     items = sorted(traffic_data.items(), key=lambda x: x[1], reverse=True)
     if top_n:
         items = items[:top_n]
@@ -395,83 +394,9 @@ def plot_histogram_matplotlib(traffic_data, date, top_n=None, save_path=None):
             _success(f"Saved histogram to {save_path}")
         except Exception as e:
             _error(f"Failed to save histogram: {e}")
-        plt.close(fig)
-        return None
-    return fig
-
-
-def _draw_junction_ax(ax, jname, count, max_count, color):
-    from matplotlib.patches import FancyBboxPatch, Rectangle
-
-    ax.set_xlim(0, 1)
-    ax.set_ylim(0, 1)
-    ax.axis('off')
-    ax.set_facecolor('white')
-
-    # Card border
-    ax.add_patch(FancyBboxPatch((0.02, 0.02), 0.96, 0.96,
-                                boxstyle='round,pad=0.02',
-                                facecolor='white', edgecolor=color, linewidth=1.5))
-
-    # Coloured header
-    ax.add_patch(Rectangle((0.02, 0.82), 0.96, 0.16, facecolor=color, edgecolor='none'))
-    ax.text(0.5, 0.90, jname, ha='center', va='center',
-            fontsize=8, fontweight='bold', color='white')
-
-    # Road intersection
-    parts = jname.split('/')
-    road1 = parts[0].strip()
-    road2 = parts[1].strip() if len(parts) > 1 else ''
-
-    cx, cy, arm = 0.5, 0.52, 0.26
-    ax.plot([cx - arm, cx + arm], [cy, cy], color=color, linewidth=4, solid_capstyle='round')
-    ax.plot([cx, cx], [cy - arm, cy + arm], color=color, linewidth=4, solid_capstyle='round')
-    ax.plot(cx, cy, 'o', color=color,   markersize=11, zorder=5)
-    ax.plot(cx, cy, 'o', color='white', markersize=5,  zorder=6)
-
-    fc = '#444'
-    ax.text(cx - arm - 0.03, cy, road1, ha='right',  va='center', fontsize=6.5, color=fc)
-    ax.text(cx + arm + 0.03, cy, road1, ha='left',   va='center', fontsize=6.5, color=fc)
-    ax.text(cx, cy + arm + 0.04, road2, ha='center', va='bottom', fontsize=6.5, color=fc)
-    ax.text(cx, cy - arm - 0.04, road2, ha='center', va='top',    fontsize=6.5, color=fc)
-
-    # Count bar
-    bx, by, bw, bh = 0.08, 0.13, 0.84, 0.07
-    ax.add_patch(Rectangle((bx, by), bw, bh, facecolor='#e0e0e0', edgecolor='#bbb', linewidth=0.5))
-    fill = bw * (count / max_count) if max_count else 0
-    if fill > 0:
-        ax.add_patch(Rectangle((bx, by), fill, bh, facecolor=color, edgecolor='none'))
-
-    ax.text(0.5, 0.062, f'{count:,} vehicles', ha='center', va='center',
-            fontsize=9, fontweight='bold', color='#222')
-
-
-def plot_junctions_matplotlib(traffic_data, date):
-    """Build the junction-cards figure. Returns the figure."""
-    if not MATPLOTLIB_AVAILABLE or not traffic_data:
-        return None
-
-    items = sorted(traffic_data.items(), key=lambda x: -x[1])
-    n = len(items)
-    max_count = items[0][1] if items else 1
-    colors = ["#4e79a7", "#f28e2b", "#e15759", "#76b7b2",
-              "#59a14f", "#edc949", "#af7aa1", "#ff9da7"]
-
-    cols = min(3, n)
-    rows = (n + cols - 1) // cols
-
-    fig = plt.figure(figsize=(cols * 4.5, rows * 4.2 + 0.6), facecolor='#f0f2f5')
-    fig.suptitle(f'Junction Breakdown  —  {date}', fontsize=13, fontweight='bold')
-
-    for i, (jname, count) in enumerate(items):
-        ax = fig.add_subplot(rows, cols, i + 1)
-        _draw_junction_ax(ax, jname, count, max_count, colors[i % len(colors)])
-
-    for j in range(n, rows * cols):
-        fig.add_subplot(rows, cols, j + 1).axis('off')
-
-    plt.tight_layout(rect=[0, 0, 1, 0.94])
-    return fig
+    else:
+        plt.show(block=False)
+    plt.close(fig)
 
 
 class HistogramApp:
@@ -692,33 +617,10 @@ class HistogramApp:
 
     def run(self):
         if MATPLOTLIB_AVAILABLE:
-            from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
-            fig_graph = plot_histogram_matplotlib(self.traffic_data, self.date)
-            fig_junc  = plot_junctions_matplotlib(self.traffic_data, self.date)
-
-            root = tk.Tk()
-            root.title(f"Traffic Analysis — {self.date}")
-            root.geometry("1100x700")
-
-            nb = ttk.Notebook(root)
-            nb.pack(fill='both', expand=True, padx=4, pady=4)
-
-            for fig, label in [(fig_graph, '  Graph  '), (fig_junc, '  Junctions  ')]:
-                if fig is None:
-                    continue
-                tab = tk.Frame(nb)
-                nb.add(tab, text=label)
-                canvas = FigureCanvasTkAgg(fig, master=tab)
-                canvas.draw()
-                NavigationToolbar2Tk(canvas, tab).update()
-                canvas.get_tk_widget().pack(fill='both', expand=True)
-
-            root.mainloop()
-            plt.close('all')
-        else:
-            self.setup_window()
-            self.root.after(50, self.draw_junction_view)
-            self.root.mainloop()
+            plot_histogram_matplotlib(self.traffic_data, self.date)
+        self.setup_window()
+        self.root.after(50, self.draw_junction_view)
+        self.root.mainloop()
 
 
 # ─────────────────────────── Multi-file processor ────────────────────────────
