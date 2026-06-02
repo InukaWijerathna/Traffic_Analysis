@@ -1,55 +1,77 @@
 # Traffic Analysis
 
-Lightweight Python tools to process, summarise and visualise CSV traffic-count data collected across dates and junctions.
+Lightweight Python tools to process, summarise, and visualise CSV traffic-count data collected across multiple dates and junctions.
 
-## Summary
-- Reads CSV files from the `data/` folder, normalises vehicle and junction names, computes metrics per date/junction, and saves human-readable summaries to `results.txt`.
-- Includes a small Tkinter histogram UI (`HistogramApp`) and a CLI helper `MultiCSVProcessor` for interactive processing.
+## Features
+
+- Reads one or more CSV files from the `data/` folder
+- Normalises vehicle types (handles misspellings: `buss` → `bus`, etc.) and canonicalises junction names
+- Computes per-date metrics including:
+  - Total vehicles, trucks, electric/hybrid, and two-wheeled counts
+  - Buses leaving Elm Avenue/Rabbit Road heading north
+  - Vehicles that did not turn (same entry and exit direction)
+  - Percentage of trucks and Elm Avenue scooters
+  - Average bicycles per hour
+  - Vehicles exceeding the speed limit
+  - Peak hour(s) at Hanley Highway/Westway
+  - Number of rainy hours
+- Appends human-readable summaries to `results.txt`
+- Interactive matplotlib histogram embedded in a Tkinter window — toggle sort order, save PNG
+- Batch mode aggregates all files into a combined summary
 
 ## Requirements
-- Python 3.8+
-- Install dependencies:
+
+- Python 3.9+
+- matplotlib (for histogram visualisation)
+- pytest (for tests)
 
 ```bash
 python -m pip install -r requirements.txt
 ```
 
 ## Quickstart
-- Run tests:
+
+Run the interactive processor:
 
 ```bash
-python -m pytest -q
+python traffic_analysis.py
 ```
 
-- Run the interactive processor:
+Or invoke it from a script:
 
 ```bash
 python -c "from traffic_analysis import MultiCSVProcessor; MultiCSVProcessor().process_files()"
 ```
 
-## Data files
-Place CSV files in the `data/` directory. Sample files included:
+The menu lets you pick a single date file or process all files at once.
 
-- [data/traffic_data15062024.csv](data/traffic_data15062024.csv)
-- [data/traffic_data16062024.csv](data/traffic_data16062024.csv)
-- [data/traffic_data21062024.csv](data/traffic_data21062024.csv)
-- [data/traffic_data22062024.csv](data/traffic_data22062024.csv)
-- [data/traffic_data23062024.csv](data/traffic_data23062024.csv)
-- [data/traffic_data24062024.csv](data/traffic_data24062024.csv)
-- [data/traffic_data25062024.csv](data/traffic_data25062024.csv)
-- [data/traffic_data26062024.csv](data/traffic_data26062024.csv)
-- [data/traffic_data27062024.csv](data/traffic_data27062024.csv)
-- [data/traffic_data28062024.csv](data/traffic_data28062024.csv)
-- [data/traffic_data29062024.csv](data/traffic_data29062024.csv)
+## Running tests
+
+```bash
+python -m pytest -q
+```
+
+CI runs tests against Python 3.9, 3.10, and 3.11 on every push and pull request to `main`.
+
+## Project structure
+
+```
+Traffic_Analysis/
+├── traffic_analysis.py      # Core processing, histogram UI, CLI processor
+├── data/                    # CSV input files (traffic_dataXX062024.csv)
+├── results.txt              # Appended output summaries
+├── tests/
+│   └── test_processing.py   # pytest tests for CSV parsing and aggregation
+└── requirements.txt
+```
+
+## Data files
+
+Place CSV files in the `data/` directory. Each file should contain columns including `Date`, `JunctionName`, `VehicleType`, `VehicleSpeed`, `JunctionSpeedLimit`, `timeOfDay`, `elctricHybrid`, `travel_Direction_in`, `travel_Direction_out`, and `Weather_Conditions`.
+
+Sample files covering 15–29 June 2024 are included in `data/`.
 
 ## Output
-- Summaries appended to `results.txt` in the repository root.
-- The Tkinter histogram provides a basic visualisation of junction counts.
 
-## Tests and development
-- Tests live in `tests/test_processing.py` and exercise core CSV parsing and aggregation logic.
-- To extend: consider switching the visualisation to `matplotlib` for saved charts, or implement streaming aggregation for larger inputs.
-
----
-
-If you'd like, I can also add a `CONTRIBUTING.md`, GitHub Actions CI, or convert visualisations to matplotlib. Which would you prefer next?
+- Metrics for each processed file are printed to the terminal and appended to `results.txt`.
+- An interactive matplotlib histogram shows vehicle counts per junction, embedded in a Tkinter window with toggle-sort and save-PNG controls.
