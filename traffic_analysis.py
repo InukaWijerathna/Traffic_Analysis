@@ -227,9 +227,13 @@ def display_outcomes(outcomes):
     print("--- End Outcomes ---\n")
 
 
-def save_results_to_file(outcomes, file_name="results.txt"):
+RESULTS_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'results.txt')
+
+
+def save_results_to_file(outcomes, file_name=None):
+    path = file_name or RESULTS_FILE
     try:
-        with open(file_name, 'a', encoding='utf-8') as f:
+        with open(path, 'a', encoding='utf-8') as f:
             f.write('--- Processed Outcomes ---\n')
             for k, v in outcomes.items():
                 f.write(f"{k}: {v}\n")
@@ -279,151 +283,75 @@ class HistogramApp:
     def __init__(self, traffic_data, date):
         self.traffic_data = traffic_data
         self.date = date
-        self.root = tk.Tk()
-        self.canvas = None
-        self._bar_items = []
         self._sort_desc = True
-        self.tooltip = None
+        self.fig = None
+        self.ax = None
+        self._mpl_canvas = None
 
-    def setup_window(self):
-        self.root.title(f"Traffic Histogram - {self.date}")
-        width, height = 900, 600
-
-        # Toolbar
-        toolbar = tk.Frame(self.root)
-        toolbar.pack(fill='x', padx=6, pady=4)
-        sort_btn = tk.Button(toolbar, text='Toggle Sort', command=self.toggle_sort)
-        sort_btn.pack(side='left')
-        save_btn = tk.Button(toolbar, text='Save as PS', command=self.save_as_postscript)
-        save_btn.pack(side='left', padx=(6, 0))
-        # Matplotlib quick view / export (enabled only if matplotlib is available)
-        mpl_text = 'Matplotlib View' if MATPLOTLIB_AVAILABLE else 'Matplotlib (missing)'
-        mpl_btn = tk.Button(toolbar, text=mpl_text, command=self.open_matplotlib, state='normal' if MATPLOTLIB_AVAILABLE else 'disabled')
-        mpl_btn.pack(side='left', padx=(6, 0))
-        png_btn = tk.Button(toolbar, text='Save PNG', command=self.save_as_png, state='normal' if MATPLOTLIB_AVAILABLE else 'disabled')
-        png_btn.pack(side='left', padx=(6, 0))
-
-        # Canvas with horizontal scrollbar for many bars
-        canvas_frame = tk.Frame(self.root)
-        canvas_frame.pack(fill='both', expand=True)
-        self.canvas = tk.Canvas(canvas_frame, width=width, height=height, bg='white')
-        hbar = tk.Scrollbar(canvas_frame, orient='horizontal', command=self.canvas.xview)
-        self.canvas.configure(xscrollcommand=hbar.set)
-        self.canvas.pack(side='top', fill='both', expand=True)
-        hbar.pack(side='bottom', fill='x')
-
-        self.width = width
-        self.height = height
-        # tooltip label (hidden until needed)
-        self.tooltip = tk.Label(self.root, bg='lightyellow', relief='solid', borderwidth=1)
-
-    def draw_histogram(self):
-        if not self.traffic_data:
-            self.canvas.create_text(self.width // 2, self.height // 2, text="No data to display", font=("Arial", 16))
-            return
+    def _draw_figure(self):
+        self.ax.clear()
         items = sorted(self.traffic_data.items(), key=lambda x: x[1], reverse=self._sort_desc)
-        values = [t[1] for t in items]
-        left_margin = 100
-        right_margin = 50
-        top_margin = 50
-        bottom_margin = 100
-        plot_width = self.width - left_margin - right_margin
-        plot_height = self.height - top_margin - bottom_margin
-        self.canvas.create_line(left_margin, top_margin, left_margin, top_margin + plot_height, width=2)
-        self.canvas.create_line(left_margin, top_margin + plot_height, left_margin + plot_width, top_margin + plot_height, width=2)
-        max_val = max(values) if values else 1
-        # compute bar width and spacing, allow horizontal scrolling if too many bars
-        base_bar_width = 40
-        bar_width = max(20, min(base_bar_width, plot_width // (len(values) * 2)))
-        spacing = 20
-        total_plot_width = left_margin + right_margin + (bar_width + spacing) * len(values) + spacing
-        if total_plot_width > self.width:
-            scroll_region_width = total_plot_width
-        else:
-            scroll_region_width = self.width
-        self.canvas.configure(scrollregion=(0, 0, scroll_region_width, self.height))
-        colors = ["#4e79a7", "#f28e2b", "#e15759", "#76b7b2", "#59a14f", "#edc949", "#af7aa1", "#ff9da7"]
-        x = left_margin + spacing
-        # clear previous bar item ids
-        self._bar_items.clear()
-        for i, (label, val) in enumerate(items):
-            h = int((val / max_val) * (plot_height - 20))
-            y0 = top_margin + plot_height - h
-            y1 = top_margin + plot_height
-            color = colors[i % len(colors)]
-            rect_id = self.canvas.create_rectangle(x, y0, x + bar_width, y1, fill=color, outline="black", tags=(f'bar{i}',))
-            text_id = self.canvas.create_text(x + bar_width // 2, y1 + 12, text=label, angle=45, anchor="nw", font=("Arial", 9))
-            val_id = self.canvas.create_text(x + bar_width // 2, y0 - 10, text=str(val), font=("Arial", 9))
-            # bind hover events to show tooltip
-            self.canvas.tag_bind(rect_id, '<Enter>', lambda e, L=label, V=val: self._show_tooltip(e, L, V))
-            self.canvas.tag_bind(rect_id, '<Leave>', lambda e: self._hide_tooltip())
-            self.canvas.tag_bind(rect_id, '<Motion>', lambda e: self._move_tooltip(e))
-            self._bar_items.append((rect_id, label, val))
-            x += bar_width + spacing
-        self.canvas.create_text(self.width // 2, 20, text=f"Vehicle counts per junction — {self.date}", font=("Arial", 14, "bold"))
-        self.canvas.create_text(40, top_margin + plot_height // 2, text="Count", angle=90, font=("Arial", 12))
-        self.add_legend()
-
-    def _show_tooltip(self, event, label, val):
-        txt = f"{label}: {val}"
-        self.tooltip.config(text=txt)
-        self.tooltip.place(x=event.x_root - self.root.winfo_rootx() + 10, y=event.y_root - self.root.winfo_rooty() + 10)
-
-    def _move_tooltip(self, event):
-        self.tooltip.place(x=event.x_root - self.root.winfo_rootx() + 10, y=event.y_root - self.root.winfo_rooty() + 10)
-
-    def _hide_tooltip(self):
-        self.tooltip.place_forget()
+        labels = [it[0] for it in items]
+        values = [it[1] for it in items]
+        colors = plt.get_cmap('tab20').colors
+        bars = self.ax.bar(
+            range(len(values)),
+            values,
+            color=[colors[i % len(colors)] for i in range(len(values))],
+        )
+        self.ax.set_xticks(range(len(labels)))
+        self.ax.set_xticklabels(labels, rotation=45, ha='right')
+        self.ax.set_ylabel('Count')
+        self.ax.set_title(f'Vehicle counts per junction — {self.date}')
+        self.ax.grid(axis='y', linestyle='--', alpha=0.7)
+        for bar, val in zip(bars, values):
+            self.ax.text(
+                bar.get_x() + bar.get_width() / 2,
+                bar.get_height(),
+                str(val),
+                ha='center', va='bottom', fontsize=8,
+            )
+        self.fig.tight_layout()
+        self._mpl_canvas.draw()
 
     def toggle_sort(self):
         self._sort_desc = not self._sort_desc
-        # redraw with new sort order
-        self.canvas.delete('all')
-        self.draw_histogram()
-
-    def save_as_postscript(self):
-        fname = filedialog.asksaveasfilename(defaultextension='.ps', filetypes=[('PostScript', '*.ps')])
-        if not fname:
-            return
-        try:
-            # Save the canvas as PostScript which can be converted externally to PNG/PDF
-            self.canvas.postscript(file=fname)
-            print(f"Saved canvas as {fname}")
-        except Exception as e:
-            print(f"Failed to save canvas: {e}")
-
-    def open_matplotlib(self):
-        if not MATPLOTLIB_AVAILABLE:
-            print("Matplotlib not available")
-            return
-        plot_histogram_matplotlib(self.traffic_data, self.date)
+        self._draw_figure()
 
     def save_as_png(self):
-        if not MATPLOTLIB_AVAILABLE:
-            print("Matplotlib not available")
-            return
         fname = filedialog.asksaveasfilename(defaultextension='.png', filetypes=[('PNG Image', '*.png')])
         if not fname:
             return
-        plot_histogram_matplotlib(self.traffic_data, self.date, save_path=fname)
-
-    def add_legend(self):
-        legend_x = self.width - 200
-        legend_y = 60
-        colors = ["#4e79a7", "#f28e2b", "#e15759", "#76b7b2", "#59a14f", "#edc949", "#af7aa1", "#ff9da7"]
-        for i, label in enumerate(list(self.traffic_data.keys())[:8]):
-            y = legend_y + i * 20
-            self.canvas.create_rectangle(legend_x, y, legend_x + 15, y + 12, fill=colors[i % len(colors)], outline="black")
-            self.canvas.create_text(legend_x + 20, y + 6, anchor="w", text=label, font=("Arial", 9))
+        try:
+            self.fig.savefig(fname, dpi=150)
+            print(f"Saved histogram to {fname}")
+        except Exception as e:
+            print(f"Failed to save: {e}")
 
     def run(self):
-        # Prefer Matplotlib view when available for improved visuals/export
-        if MATPLOTLIB_AVAILABLE:
-            plot_histogram_matplotlib(self.traffic_data, self.date)
+        if not MATPLOTLIB_AVAILABLE:
+            print("Matplotlib not available; please install matplotlib.")
             return
-        self.setup_window()
-        self.draw_histogram()
-        self.root.mainloop()
+        from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2Tk
+
+        root = tk.Tk()
+        root.title(f"Traffic Histogram — {self.date}")
+
+        toolbar_frame = tk.Frame(root)
+        toolbar_frame.pack(fill='x', padx=6, pady=4)
+        tk.Button(toolbar_frame, text='Toggle Sort', command=self.toggle_sort).pack(side='left')
+        tk.Button(toolbar_frame, text='Save PNG', command=self.save_as_png).pack(side='left', padx=(6, 0))
+
+        fig_w = max(8, len(self.traffic_data) * 0.8)
+        self.fig, self.ax = plt.subplots(figsize=(fig_w, 6))
+        self._mpl_canvas = FigureCanvasTkAgg(self.fig, master=root)
+        self._mpl_canvas.get_tk_widget().pack(fill='both', expand=True)
+
+        nav = NavigationToolbar2Tk(self._mpl_canvas, root)
+        nav.update()
+
+        self._draw_figure()
+        root.mainloop()
 
 
 class MultiCSVProcessor:
@@ -461,27 +389,104 @@ class MultiCSVProcessor:
         self.current_data = None
         self.current_date = None
 
-    def handle_user_interaction(self):
+    def _list_files(self):
         data_dir = DEFAULT_DATA_DIR
         if not os.path.isdir(data_dir):
             print(f"Data directory not found: {data_dir}")
-            return None
-        files = [f for f in os.listdir(data_dir) if f.lower().endswith('.csv')]
+            return data_dir, []
+        files = sorted(f for f in os.listdir(data_dir) if f.lower().endswith('.csv'))
+        return data_dir, files
+
+    def _print_menu(self, files):
+        print()
+        print("=" * 50)
+        print("  Traffic Analysis — Select a file")
+        print("=" * 50)
+        for i, f in enumerate(files, 1):
+            size_kb = os.path.getsize(os.path.join(DEFAULT_DATA_DIR, f)) // 1024
+            print(f"  {i:>2}. {f}  ({size_kb} KB)")
+        print()
+        print(f"   a. Process ALL {len(files)} files")
+        print("   q. Quit")
+        print("=" * 50)
+
+    def handle_user_interaction(self):
+        data_dir, files = self._list_files()
         if not files:
             print("No CSV files found in the data directory.")
-            return None
-        print("Available CSV files:")
-        for i, f in enumerate(files, 1):
-            print(f"  {i}. {f}")
+            return []
+        self._print_menu(files)
         while True:
-            choice = input("Enter file number to process (or 'q' to quit): ").strip()
-            if choice.lower() == 'q':
-                return None
-            if not choice.isdigit() or int(choice) < 1 or int(choice) > len(files):
-                print("Invalid choice. Please enter a valid number.")
+            choice = input("Enter choice: ").strip().lower()
+            if choice == 'q':
+                return []
+            if choice == 'a':
+                return [os.path.normpath(os.path.join(data_dir, f)) for f in files]
+            if choice.isdigit():
+                idx = int(choice) - 1
+                if 0 <= idx < len(files):
+                    return [os.path.normpath(os.path.join(data_dir, files[idx]))]
+            print(f"  Invalid choice. Enter a number 1–{len(files)}, 'a' for all, or 'q' to quit.")
+
+    def _process_single(self, path):
+        self.clear_previous_data()
+        outcomes, junction_counts = process_csv_data(path)
+        if not outcomes:
+            print(f"No data found or failed to process: {os.path.basename(path)}")
+            return
+        display_outcomes(outcomes)
+        save_results_to_file(outcomes)
+        app = HistogramApp(junction_counts, outcomes.get('date') or os.path.basename(path))
+        app.run()
+
+    def _process_all(self, paths):
+        combined_junctions = defaultdict(int)
+        total_files = len(paths)
+        agg = defaultdict(int)
+
+        for i, path in enumerate(paths, 1):
+            print(f"[{i}/{total_files}] Reading: {os.path.basename(path)}")
+            outcomes, junction_counts = process_csv_data(path)
+            if not outcomes:
+                print(f"  Skipped — no data.")
                 continue
-            idx = int(choice) - 1
-            return os.path.normpath(os.path.join(data_dir, files[idx]))
+            for key in ('total_vehicles', 'total_trucks', 'total_electric', 'two_wheeled',
+                        'buss_elm_north', 'no_turn_both', 'total_over_speed',
+                        'total_only_elm', 'total_only_hanley'):
+                agg[key] += outcomes.get(key, 0)
+            elm = outcomes.get('total_only_elm', 0)
+            agg['_elm_scooters'] += round(outcomes.get('pct_elm_scooters', 0) / 100 * elm)
+            for junc, count in junction_counts.items():
+                combined_junctions[junc] += count
+
+        if not agg['total_vehicles']:
+            print("No data to display.")
+            return
+
+        combined = {
+            'selected_file': f"All {total_files} files",
+            'date': f"{total_files} dates combined",
+            'total_vehicles':    agg['total_vehicles'],
+            'total_trucks':      agg['total_trucks'],
+            'total_electric':    agg['total_electric'],
+            'two_wheeled':       agg['two_wheeled'],
+            'buss_elm_north':    agg['buss_elm_north'],
+            'no_turn_both':      agg['no_turn_both'],
+            'pct_trucks':        round(agg['total_trucks'] / agg['total_vehicles'] * 100),
+            'avg_bicycles_per_hour': 'N/A',
+            'total_over_speed':  agg['total_over_speed'],
+            'total_only_elm':    agg['total_only_elm'],
+            'total_only_hanley': agg['total_only_hanley'],
+            'pct_elm_scooters':  round(agg['_elm_scooters'] / agg['total_only_elm'] * 100) if agg['total_only_elm'] else 0,
+            'hanley_peak_count': 'N/A',
+            'hanley_peak_hours': [],
+            'rain_hours_count':  'N/A',
+        }
+
+        display_outcomes(combined)
+        save_results_to_file(combined)
+        app = HistogramApp(dict(combined_junctions), f"All {total_files} files combined")
+        app.run()
 
     def process_files(self):
         while True:
@@ -489,22 +494,22 @@ class MultiCSVProcessor:
             if not selected:
                 print("Exiting processor.")
                 break
-            self.clear_previous_data()
-            outcomes, junction_counts = process_csv_data(selected)
-            if not outcomes:
-                print("No data found or failed to process file.")
+
+            if len(selected) == 1:
+                self._process_single(selected[0])
             else:
-                display_outcomes(outcomes)
-                save_results_to_file(outcomes, file_name='results.txt')
-                app = HistogramApp(junction_counts, outcomes.get('date') or selected)
-                app.run()
+                self._process_all(selected)
+
+            print()
+            print("  R — Run another analysis")
+            print("  Q — Quit")
             while True:
-                cont = input("Process another file? (Y/N): ").strip().upper()
-                if cont in ('Y', 'N'):
+                cont = input("Enter choice: ").strip().upper()
+                if cont in ('R', 'Q'):
                     break
-                print("Please enter 'Y' or 'N'.")
-            if cont == 'N':
-                print("Finished processing files.")
+                print("  Please enter 'R' to run again or 'Q' to quit.")
+            if cont == 'Q':
+                print("Finished.")
                 break
 
 

@@ -74,3 +74,459 @@ hanley_peak_count: 5
 hanley_peak_hours: ['1']
 rain_hours_count: 3
 
+--- Processed Outcomes ---
+selected_file: traffic_data15062024.csv
+date: 15/06/2024
+total_vehicles: 1037
+total_trucks: 109
+total_electric: 368
+two_wheeled: 401
+buss_elm_north: 15
+no_turn_both: 363
+pct_trucks: 11
+avg_bicycles_per_hour: 7
+total_over_speed: 205
+total_only_elm: 494
+total_only_hanley: 543
+pct_elm_scooters: 11
+hanley_peak_count: 39
+hanley_peak_hours: ['18']
+rain_hours_count: 0
+
+--- Processed Outcomes ---
+selected_file: traffic_data16062024.csv
+date: 16/06/2024
+total_vehicles: 101
+total_trucks: 11
+total_electric: 29
+two_wheeled: 29
+buss_elm_north: 0
+no_turn_both: 38
+pct_trucks: 11
+avg_bicycles_per_hour: 0
+total_over_speed: 20
+total_only_elm: 52
+total_only_hanley: 49
+pct_elm_scooters: 6
+hanley_peak_count: 5
+hanley_peak_hours: ['1']
+rain_hours_count: 3
+
+--- Processed Outcomes ---
+selected_file: traffic_data21062024.csv
+date: 21/06/2024
+total_vehicles: 1334
+total_trucks: 138
+total_electric: 442
+two_wheeled: 503
+buss_elm_north: 19
+no_turn_both: 494
+pct_trucks: 10
+avg_bicycles_per_hour: 10
+total_over_speed: 250
+total_only_elm: 651
+total_only_hanley: 683
+pct_elm_scooters: 10
+hanley_peak_count: 71
+hanley_peak_hours: ['18']
+rain_hours_count: 6
+
+--- Processed Outcomes ---
+selected_file: traffic_data22062024.csv
+date: 22/06/2024
+total_vehicles: 1000
+total_trucks: 85
+total_electric: 192
+two_wheeled: 277
+buss_elm_north: 19
+no_turn_both: 502
+pct_trucks: 8
+avg_bicycles_per_hour: 4
+total_over_speed: 148
+total_only_elm: 496
+total_only_hanley: 504
+pct_elm_scooters: 8
+hanley_peak_count: 30
+hanley_peak_hours: ['19']
+rain_hours_count: 24
+
+--- Processed Outcomes ---
+selected_file: traffic_data23062024.csv
+date: 23/06/2024
+total_vehicles: 1000
+total_trucks: 121
+total_electric: 192
+two_wheeled: 271
+buss_elm_north: 14
+no_turn_both: 502
+pct_trucks: 12
+avg_bicycles_per_hour: 4
+total_over_speed: 143
+total_only_elm: 498
+total_only_hanley: 502
+pct_elm_scooters: 8
+hanley_peak_count: 32
+hanley_peak_hours: ['1', '21']
+rain_hours_count: 24
+
+--- Processed Outcomes ---
+selected_file: traffic_data24062024.csv
+date: 24/06/2024
+total_vehicles: 1000
+total_trucks: 103
+total_electric: 230
+two_wheeled: 245
+buss_elm_north: 21
+no_turn_both: 496
+pct_trucks: 10
+avg_bicycles_per_hour: 4
+total_over_speed: 160
+total_only_elm: 512
+total_only_hanley: 488
+pct_elm_scooters: 6
+hanley_peak_count: 33
+hanley_peak_hours: ['11']
+rain_hours_count: 24
+
+--- Processed Outcomes ---
+selected_file: traffic_data25062024.csv
+date: 25/06/2024
+total_vehicles: 1000
+total_trucks: 91
+total_electric: 201
+two_wheeled: 260
+buss_elm_north: 16
+no_turn_both: 531
+pct_trucks: 9
+avg_bicycles_per_hour: 3
+total_over_speed: 134
+total_only_elm: 516
+total_only_hanley: 484
+pct_elm_scooters: 7
+hanley_peak_count: 30
+hanley_peak_hours: ['21']
+rain_hours_count: 24
+
+--- Processed Outcomes ---
+selected_file: traffic_data26062024.csv
+date: 26/06/2024
+total_vehicles: 1000
+total_trucks: 103
+total_electric: 209
+two_wheeled: 262
+buss_elm_north: 23
+no_turn_both: 499
+pct_trucks: 10
+avg_bicycles_per_hour: 4
+total_over_speed: 150
+total_only_elm: 517
+total_only_hanley: 483
+pct_elm_scooters: 8
+hanley_peak_count: 28
+hanley_peak_hours: ['4']
+rain_hours_count: 24
+
+--- Processed Outcomes ---
+selected_file: traffic_data27062024.csv
+date: 27/06/2024
+total_vehicles: 1000
+total_trucks: 103
+total_electric: 186
+two_wheeled: 273
+buss_elm_north: 22
+no_turn_both: 523
+pct_trucks: 10
+avg_bicycles_per_hour: 4
+total_over_speed: 146
+total_only_elm: 494
+total_only_hanley: 506
+pct_elm_scooters: 9
+hanley_peak_count: 28
+hanley_peak_hours: ['4']
+rain_hours_count: 24
+
+--- Processed Outcomes ---
+selected_file: traffic_data28062024.csv
+date: 28/06/2024
+total_vehicles: 1000
+total_trucks: 95
+total_electric: 202
+two_wheeled: 266
+buss_elm_north: 22
+no_turn_both: 505
+pct_trucks: 10
+avg_bicycles_per_hour: 4
+total_over_speed: 147
+total_only_elm: 496
+total_only_hanley: 504
+pct_elm_scooters: 7
+hanley_peak_count: 27
+hanley_peak_hours: ['17']
+rain_hours_count: 24
+
+--- Processed Outcomes ---
+selected_file: traffic_data29062024.csv
+date: 29/06/2024
+total_vehicles: 1000
+total_trucks: 107
+total_electric: 204
+two_wheeled: 255
+buss_elm_north: 20
+no_turn_both: 512
+pct_trucks: 11
+avg_bicycles_per_hour: 3
+total_over_speed: 149
+total_only_elm: 510
+total_only_hanley: 490
+pct_elm_scooters: 7
+hanley_peak_count: 30
+hanley_peak_hours: ['10']
+rain_hours_count: 24
+
+--- Processed Outcomes ---
+selected_file: traffic_data15062024.csv
+date: 15/06/2024
+total_vehicles: 1037
+total_trucks: 109
+total_electric: 368
+two_wheeled: 401
+buss_elm_north: 15
+no_turn_both: 363
+pct_trucks: 11
+avg_bicycles_per_hour: 7
+total_over_speed: 205
+total_only_elm: 494
+total_only_hanley: 543
+pct_elm_scooters: 11
+hanley_peak_count: 39
+hanley_peak_hours: ['18']
+rain_hours_count: 0
+
+--- Processed Outcomes ---
+selected_file: traffic_data16062024.csv
+date: 16/06/2024
+total_vehicles: 101
+total_trucks: 11
+total_electric: 29
+two_wheeled: 29
+buss_elm_north: 0
+no_turn_both: 38
+pct_trucks: 11
+avg_bicycles_per_hour: 0
+total_over_speed: 20
+total_only_elm: 52
+total_only_hanley: 49
+pct_elm_scooters: 6
+hanley_peak_count: 5
+hanley_peak_hours: ['1']
+rain_hours_count: 3
+
+--- Processed Outcomes ---
+selected_file: traffic_data21062024.csv
+date: 21/06/2024
+total_vehicles: 1334
+total_trucks: 138
+total_electric: 442
+two_wheeled: 503
+buss_elm_north: 19
+no_turn_both: 494
+pct_trucks: 10
+avg_bicycles_per_hour: 10
+total_over_speed: 250
+total_only_elm: 651
+total_only_hanley: 683
+pct_elm_scooters: 10
+hanley_peak_count: 71
+hanley_peak_hours: ['18']
+rain_hours_count: 6
+
+--- Processed Outcomes ---
+selected_file: traffic_data22062024.csv
+date: 22/06/2024
+total_vehicles: 1000
+total_trucks: 85
+total_electric: 192
+two_wheeled: 277
+buss_elm_north: 19
+no_turn_both: 502
+pct_trucks: 8
+avg_bicycles_per_hour: 4
+total_over_speed: 148
+total_only_elm: 496
+total_only_hanley: 504
+pct_elm_scooters: 8
+hanley_peak_count: 30
+hanley_peak_hours: ['19']
+rain_hours_count: 24
+
+--- Processed Outcomes ---
+selected_file: traffic_data23062024.csv
+date: 23/06/2024
+total_vehicles: 1000
+total_trucks: 121
+total_electric: 192
+two_wheeled: 271
+buss_elm_north: 14
+no_turn_both: 502
+pct_trucks: 12
+avg_bicycles_per_hour: 4
+total_over_speed: 143
+total_only_elm: 498
+total_only_hanley: 502
+pct_elm_scooters: 8
+hanley_peak_count: 32
+hanley_peak_hours: ['1', '21']
+rain_hours_count: 24
+
+--- Processed Outcomes ---
+selected_file: traffic_data24062024.csv
+date: 24/06/2024
+total_vehicles: 1000
+total_trucks: 103
+total_electric: 230
+two_wheeled: 245
+buss_elm_north: 21
+no_turn_both: 496
+pct_trucks: 10
+avg_bicycles_per_hour: 4
+total_over_speed: 160
+total_only_elm: 512
+total_only_hanley: 488
+pct_elm_scooters: 6
+hanley_peak_count: 33
+hanley_peak_hours: ['11']
+rain_hours_count: 24
+
+--- Processed Outcomes ---
+selected_file: traffic_data25062024.csv
+date: 25/06/2024
+total_vehicles: 1000
+total_trucks: 91
+total_electric: 201
+two_wheeled: 260
+buss_elm_north: 16
+no_turn_both: 531
+pct_trucks: 9
+avg_bicycles_per_hour: 3
+total_over_speed: 134
+total_only_elm: 516
+total_only_hanley: 484
+pct_elm_scooters: 7
+hanley_peak_count: 30
+hanley_peak_hours: ['21']
+rain_hours_count: 24
+
+--- Processed Outcomes ---
+selected_file: traffic_data26062024.csv
+date: 26/06/2024
+total_vehicles: 1000
+total_trucks: 103
+total_electric: 209
+two_wheeled: 262
+buss_elm_north: 23
+no_turn_both: 499
+pct_trucks: 10
+avg_bicycles_per_hour: 4
+total_over_speed: 150
+total_only_elm: 517
+total_only_hanley: 483
+pct_elm_scooters: 8
+hanley_peak_count: 28
+hanley_peak_hours: ['4']
+rain_hours_count: 24
+
+--- Processed Outcomes ---
+selected_file: traffic_data27062024.csv
+date: 27/06/2024
+total_vehicles: 1000
+total_trucks: 103
+total_electric: 186
+two_wheeled: 273
+buss_elm_north: 22
+no_turn_both: 523
+pct_trucks: 10
+avg_bicycles_per_hour: 4
+total_over_speed: 146
+total_only_elm: 494
+total_only_hanley: 506
+pct_elm_scooters: 9
+hanley_peak_count: 28
+hanley_peak_hours: ['4']
+rain_hours_count: 24
+
+--- Processed Outcomes ---
+selected_file: traffic_data28062024.csv
+date: 28/06/2024
+total_vehicles: 1000
+total_trucks: 95
+total_electric: 202
+two_wheeled: 266
+buss_elm_north: 22
+no_turn_both: 505
+pct_trucks: 10
+avg_bicycles_per_hour: 4
+total_over_speed: 147
+total_only_elm: 496
+total_only_hanley: 504
+pct_elm_scooters: 7
+hanley_peak_count: 27
+hanley_peak_hours: ['17']
+rain_hours_count: 24
+
+--- Processed Outcomes ---
+selected_file: traffic_data29062024.csv
+date: 29/06/2024
+total_vehicles: 1000
+total_trucks: 107
+total_electric: 204
+two_wheeled: 255
+buss_elm_north: 20
+no_turn_both: 512
+pct_trucks: 11
+avg_bicycles_per_hour: 3
+total_over_speed: 149
+total_only_elm: 510
+total_only_hanley: 490
+pct_elm_scooters: 7
+hanley_peak_count: 30
+hanley_peak_hours: ['10']
+rain_hours_count: 24
+
+--- Processed Outcomes ---
+selected_file: All 11 files
+date: 11 dates combined
+total_vehicles: 10472
+total_trucks: 1066
+total_electric: 2455
+two_wheeled: 3042
+buss_elm_north: 191
+no_turn_both: 4965
+pct_trucks: 10
+avg_bicycles_per_hour: N/A
+total_over_speed: 1652
+total_only_elm: 5236
+total_only_hanley: 5236
+pct_elm_scooters: 8
+hanley_peak_count: N/A
+hanley_peak_hours: []
+rain_hours_count: N/A
+
+--- Processed Outcomes ---
+selected_file: traffic_data16062024.csv
+date: 16/06/2024
+total_vehicles: 101
+total_trucks: 11
+total_electric: 29
+two_wheeled: 29
+buss_elm_north: 0
+no_turn_both: 38
+pct_trucks: 11
+avg_bicycles_per_hour: 0
+total_over_speed: 20
+total_only_elm: 52
+total_only_hanley: 49
+pct_elm_scooters: 6
+hanley_peak_count: 5
+hanley_peak_hours: ['1']
+rain_hours_count: 3
+
