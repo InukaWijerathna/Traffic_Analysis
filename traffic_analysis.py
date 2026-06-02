@@ -337,6 +337,12 @@ class HistogramApp:
         root = tk.Tk()
         root.title(f"Traffic Histogram — {self.date}")
 
+        def on_close():
+            plt.close(self.fig)
+            root.destroy()
+
+        root.protocol("WM_DELETE_WINDOW", on_close)
+
         toolbar_frame = tk.Frame(root)
         toolbar_frame.pack(fill='x', padx=6, pady=4)
         tk.Button(toolbar_frame, text='Toggle Sort', command=self.toggle_sort).pack(side='left')
